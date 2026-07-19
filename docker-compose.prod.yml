@@ -1,0 +1,138 @@
+services:
+
+  mysql:
+    env_file:
+      - .env.production
+
+    restart: unless-stopped
+
+    mem_limit: 512m
+    cpus: 0.60
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+  mysqld-exporter:
+    restart: unless-stopped
+    mem_limit: 64m
+    cpus: 0.10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"        
+
+  backend1:
+    build:
+      target: production
+
+    env_file:
+      - .env.production
+
+    restart: unless-stopped
+
+    environment:
+      NODE_ENV: production
+      INSTANCE_NAME: backend1
+
+    mem_limit: 384m
+    cpus: 0.40
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  backend2:
+    build:
+      target: production
+
+    env_file:
+      - .env.production
+
+    restart: unless-stopped
+
+    environment:
+      NODE_ENV: production
+      INSTANCE_NAME: backend2
+
+    mem_limit: 384m
+    cpus: 0.40
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+
+  frontend:
+    build:
+      target: production
+
+    env_file:
+      - .env.production
+
+    restart: unless-stopped
+
+    mem_limit: 192m
+    cpus: 0.20
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nginx:
+    restart: always
+
+    mem_limit: 128m
+    cpus: 0.10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  cadvisor:
+    restart: unless-stopped
+
+    mem_limit: 128m
+    cpus: 0.10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  prometheus:
+    restart: unless-stopped
+
+    mem_limit: 384m
+    cpus: 0.30
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  grafana:
+    restart: unless-stopped
+
+    mem_limit: 512m     # mem_limit: 256m
+    cpus: 0.50           #cpus: 0.20
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        
