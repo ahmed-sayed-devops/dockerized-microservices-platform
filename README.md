@@ -203,7 +203,7 @@ Persistent Docker volumes ensure data survives container recreation.
 - Grafana Data
 
 <p align="center">
-<img src="screenshots/21-docker-networks-volumes.png" width="95%">
+<img src="ScreenShots/21-docker-networks-volumes.png" width="95%">
 </p>
 
 ---
@@ -245,7 +245,7 @@ docker compose down
 ## Build Images
 
 <p align="center">
-<img src="screenshots/22-docker-images.png" width="95%">
+<img src="ScreenShots/22-docker-images.png" width="95%">
 </p>
 
 ---
@@ -253,7 +253,7 @@ docker compose down
 ## Start Docker Compose
 
 <p align="center">
-<img src="screenshots/02-Compose-Up.png" width="95%">
+<img src="ScreenShots/02-Compose-Up.png" width="95%">
 </p>
 
 ---
@@ -263,7 +263,7 @@ docker compose down
 All containers are healthy and operational.
 
 <p align="center">
-<img src="screenshots/03-Running-Containers.png" width="95%">
+<img src="ScreenShots/03-Running-Containers.png" width="95%">
 </p>
 
 ---
@@ -273,7 +273,7 @@ All containers are healthy and operational.
 The application is successfully served through Nginx.
 
 <p align="center">
-<img src="screenshots/07-browser-test.png" width="95%">
+<img src="ScreenShots/07-browser-test.png" width="95%">
 </p>
 
 ---
@@ -291,7 +291,7 @@ The monitoring stack consists of:
 ## Prometheus Targets
 
 <p align="center">
-<img src="screenshots/08-Prom-Targets.png" width="95%">
+<img src="ScreenShots/08-Prom-Targets.png" width="95%">
 </p>
 
 All monitoring targets are successfully discovered and scraped.
@@ -345,7 +345,7 @@ Metrics include:
 - HTTP Status Codes
 
 <p align="center">
-<img src="screenshots/12-application-dashboard.png" width="95%">
+<img src="ScreenShots/12-application-dashboard.png" width="95%">
 </p>
 
 ---
@@ -364,7 +364,7 @@ The dashboard displays:
 - Container Health
 
 <p align="center">
-<img src="screenshots/13-cadvisor-dashboard.png" width="95%">
+<img src="ScreenShots/13-cadvisor-dashboard.png" width="95%">
 </p>
 
 ---
@@ -385,7 +385,7 @@ The dashboard provides:
 - Slow Queries
 
 <p align="center">
-<img src="screenshots/16-mysql-dashboard-1.png" width="95%">
+<img src="ScreenShots/16-mysql-dashboard-1.png" width="95%">
 </p>
 
 ---
@@ -430,7 +430,7 @@ docker kill <container-name>
 Docker restarted the container automatically according to its configured restart policy.
 
 <p align="center">
-<img src="screenshots/04-Test-RestartPolicy-By-docker-kill.png" width="95%">
+<img src="ScreenShots/04-Test-RestartPolicy-By-docker-kill.png" width="95%">
 </p>
 
 ---
@@ -438,7 +438,7 @@ Docker restarted the container automatically according to its configured restart
 The **unless-stopped** policy was also verified by manually stopping a container.
 
 <p align="center">
-<img src="screenshots/05-Test-RestartPolicy-Unless-stopped.png" width="95%">
+<img src="ScreenShots/05-Test-RestartPolicy-Unless-stopped.png" width="95%">
 </p>
 
 ---
@@ -454,7 +454,7 @@ docker stats
 ```
 
 <p align="center">
-<img src="screenshots/06-docker-stats.png" width="95%">
+<img src="ScreenShots/06-docker-stats.png" width="95%">
 </p>
 
 ---
@@ -474,7 +474,7 @@ docker stop docker-platform-backend1-1
 ## Backend Instance Stopped
 
 <p align="center">
-<img src="screenshots/09-Stop-Target.png" width="95%">
+<img src="ScreenShots/09-Stop-Target.png" width="95%">
 </p>
 
 ---
@@ -484,7 +484,7 @@ docker stop docker-platform-backend1-1
 Prometheus immediately reported the backend instance as **DOWN**.
 
 <p align="center">
-<img src="screenshots/10-Prom-Target-Down.png" width="95%">
+<img src="ScreenShots/10-Prom-Target-Down.png" width="95%">
 </p>
 
 ---
@@ -494,7 +494,7 @@ Prometheus immediately reported the backend instance as **DOWN**.
 Despite the backend failure, users continued accessing the application successfully because Nginx automatically redirected requests to the healthy backend instance.
 
 <p align="center">
-<img src="screenshots/11-high-availability-test.png" width="95%">
+<img src="ScreenShots/11-high-availability-test.png" width="95%">
 </p>
 
 ---
@@ -512,7 +512,7 @@ done
 Load generation:
 
 <p align="center">
-<img src="screenshots/19-load-test.png" width="95%">
+<img src="ScreenShots/19-load-test.png" width="95%">
 </p>
 
 ---
@@ -520,7 +520,7 @@ Load generation:
 Grafana immediately reflected the increased traffic.
 
 <p align="center">
-<img src="screenshots/20-Dashboard-Track.png" width="95%">
+<img src="ScreenShots/20-Dashboard-Track.png" width="95%">
 </p>
 
 ---
