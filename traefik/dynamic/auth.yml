@@ -1,0 +1,11 @@
+http:
+  middlewares:
+
+    api-auth:
+      forwardAuth:
+        address: "http://auth-service:3001/verify"
+
+        trustForwardHeader: true
+
+        authRequestHeaders:
+          - "X-API-Key"

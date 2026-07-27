@@ -17,7 +17,7 @@ COPY . .
 
 ############################################################
 # Stage 2 - Development
-# Used for local development with hot reload
+# Used for local development
 ############################################################
 FROM node:22-alpine AS development
 
@@ -27,12 +27,12 @@ ENV NODE_ENV=development
 
 COPY package*.json ./
 
-# Install all dependencies (including nodemon)
+# Install all dependencies
 RUN npm install
 
 COPY . .
 
-EXPOSE 4000
+EXPOSE 3001
 
 CMD ["npm", "run", "dev"]
 
@@ -63,10 +63,10 @@ RUN chown -R appuser:appgroup /app
 # Run as non-root user
 USER appuser
 
-EXPOSE 4000
+EXPOSE 3001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-CMD wget -q --spider http://localhost:4000/api/health || exit 1
+CMD wget -q --spider http://localhost:3001/health || exit 1
 
 CMD ["npm", "start"]

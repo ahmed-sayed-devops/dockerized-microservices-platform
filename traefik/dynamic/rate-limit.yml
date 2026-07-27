@@ -1,0 +1,7 @@
+http:
+  middlewares:
+
+    api-ratelimit:
+      rateLimit:
+        average: 10
+        burst: 20

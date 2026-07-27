@@ -1,0 +1,27 @@
+http:
+
+  routers:
+
+    dashboard:
+
+      rule: PathPrefix(`/traefik`)
+
+      entryPoints:
+        - websecure
+
+      service: api@internal
+
+      tls: {}
+
+      middlewares:
+        - admin-chain
+        - traefik-strip
+
+  middlewares:
+
+    traefik-strip:
+
+      stripPrefix:
+
+        prefixes:
+          - "/traefik"

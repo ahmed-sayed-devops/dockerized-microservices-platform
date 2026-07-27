@@ -14,3 +14,16 @@ VALUES
 ('Keyboard', 'Mechanical Keyboard', 500.00, 15),
 ('Mouse', 'Gaming Mouse', 250.00, 30),
 ('Monitor', '24 inch Monitor', 3500.00, 8);
+
+-- =====================================
+-- MySQL Exporter User
+-- =====================================
+
+CREATE USER IF NOT EXISTS 'mysqlexporter'@'%' IDENTIFIED BY 'exporter123';
+
+GRANT PROCESS,
+      REPLICATION CLIENT,
+      SELECT
+ON *.* TO 'mysqlexporter'@'%';
+
+FLUSH PRIVILEGES;

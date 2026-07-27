@@ -3,6 +3,7 @@ const client = require("prom-client");
 
 const productsRouter = require("./routes/products");
 const healthRouter = require("./routes/health");
+const internalRouter = require("./routes/internal");
 
 const app = express();
 
@@ -77,11 +78,16 @@ app.get("/", (req, res) => {
   });
 });
 
-// Health Check
-app.use("/health", healthRouter);
+// Public APIs
 
-// Products API
+// Health
+app.use("/api/health", healthRouter);
+
+// Products
 app.use("/api/products", productsRouter);
+
+// Internal APIs (Protected by ForwardAuth)
+app.use("/internal", internalRouter);
 
 const PORT = process.env.PORT || 4000;
 

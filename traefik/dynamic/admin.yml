@@ -1,0 +1,41 @@
+http:
+
+  middlewares:
+
+    grafana-strip:
+      stripPrefix:
+        prefixes:
+          - "/grafana"
+
+    prometheus-strip:
+      stripPrefix:
+        prefixes:
+          - "/prometheus"
+
+    alertmanager-strip:
+      stripPrefix:
+        prefixes:
+          - "/alertmanager"
+
+    traefik-strip:
+      stripPrefix:
+        prefixes:
+          - "/traefik"
+
+    admin-chain:
+      chain:
+        middlewares:
+          - security-headers
+          - admin-whitelist
+
+    admin-ratelimit:
+      rateLimit:
+        average: 5
+        burst: 10
+
+    admin-whitelist:
+      ipWhiteList:
+        sourceRange:
+          - "100.81.182.90/32"    # My-IP
+          - "100.86.78.124/32"    # VM-IP
+          - "127.0.0.1/32"        # LocalHost

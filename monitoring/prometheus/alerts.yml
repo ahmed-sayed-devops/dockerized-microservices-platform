@@ -1,0 +1,186 @@
+groups:
+  - name: docker-platform-alerts
+
+    rules:
+
+      # =====================================================
+      # Backend
+      # =====================================================
+
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Backend Down
+          description: "{{ $labels.instance }} is down."
+
+      # =====================================================
+      # MySQL Exporter
+      # =====================================================
+
+      - alert: MySQLExporterDown
+        expr: up{job="mysql"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: MySQL Exporter Down
+          description: "{{ $labels.instance }} is unreachable."
+
+      # =====================================================
+      # Redis Exporter
+      # =====================================================
+
+      - alert: RedisExporterDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Redis Exporter Down
+          description: Redis Exporter is unreachable.
+
+      # =====================================================
+      # Traefik
+      # =====================================================
+
+      - alert: TraefikDown
+        expr: up{job="traefik"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Traefik Down
+          description: Reverse Proxy is unavailable.
+
+      # =====================================================
+      # Prometheus
+      # =====================================================
+
+      - alert: PrometheusDown
+        expr: up{job="prometheus"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Prometheus Down
+          description: Prometheus is unreachable.
+
+      # =====================================================
+      # Alertmanager
+      # =====================================================
+
+      - alert: AlertmanagerDown
+        expr: up{job="alertmanager"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Alertmanager Down
+          description: Alertmanager is unavailable.
+
+      # =====================================================
+      # Grafana
+      # =====================================================
+
+      - alert: GrafanaDown
+        expr: up{job="grafana"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Grafana Down
+          description: Grafana dashboard is unavailable.
+
+      # =====================================================
+      # Loki
+      # =====================================================
+
+      - alert: LokiDown
+        expr: up{job="loki"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Loki Down
+          description: Central logging service is unavailable.
+
+      # =====================================================
+      # Promtail
+      # =====================================================
+
+      - alert: PromtailDown
+        expr: up{job="promtail"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Promtail Down
+          description: Log collector is unavailable.
+
+      # =====================================================
+      # cAdvisor
+      # =====================================================
+
+      - alert: CadvisorDown
+        expr: up{job="cadvisor"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: cAdvisor Down
+          description: Container metrics unavailable.
+
+      # =====================================================
+      # Node Exporter
+      # =====================================================
+
+      - alert: NodeExporterDown
+        expr: up{job="node"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Node Exporter Down
+          description: Host metrics unavailable.
+
+      # =====================================================
+      # High CPU Usage
+      # =====================================================
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: High CPU Usage
+          description: CPU usage exceeded 80%.
+
+      # =====================================================
+      # High Memory Usage
+      # =====================================================
+
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: High Memory Usage
+          description: Memory usage exceeded 90%.
+
+      # =====================================================
+      # Disk Almost Full
+      # =====================================================
+
+      - alert: DiskAlmostFull
+        expr: (1 - (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"})) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Disk Almost Full
+          description: Disk usage exceeded 90%.

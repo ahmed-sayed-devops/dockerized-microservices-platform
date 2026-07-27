@@ -19,6 +19,7 @@ services:
 
     networks:
       - backend-net
+
   mysqld-exporter:
     image: prom/mysqld-exporter:v0.16.0
 
@@ -31,6 +32,8 @@ services:
     depends_on:
      mysql:
        condition: service_healthy
+     redis:
+       condition: service_healthy  
 
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:9104/metrics"]
@@ -45,50 +48,189 @@ services:
     networks:
     - backend-net
     - monitoring-net
+
+  redis:
+    image: redis:7-alpine
+
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+
+    expose:
+      - "6379"
+
+    volumes:
+      - redis-data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    networks:
+      - backend-net
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+
+    environment:
+      REDIS_ADDR: redis://redis:6379
+
+    expose:
+      - "9121"
+
+    depends_on:
+      redis:
+        condition: service_healthy
+
+    networks:
+      - backend-net
+      - monitoring-net    
+          
   backend1:
+    image: ${DOCKERHUB_USERNAME}/backend:${VERSION}
     build:
       context: ./backend
 
     depends_on:
       mysql:
         condition: service_healthy
+      redis:
+        condition: service_healthy  
 
+    labels:
+      # Public Router
+
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.backend-public.rule=PathPrefix(`/api`)"
+      - "traefik.http.routers.backend-public.entrypoints=websecure"
+      - "traefik.http.routers.backend-public.tls=true"
+      - "traefik.http.routers.backend-public.middlewares=public-chain@file"
+      - "traefik.http.routers.backend-public.service=backend"
+
+      # Internal Router
+
+      - "traefik.http.routers.backend-internal.rule=PathPrefix(`/internal`)"
+      - "traefik.http.routers.backend-internal.entrypoints=websecure"
+      - "traefik.http.routers.backend-internal.tls=true"
+      - "traefik.http.routers.backend-internal.middlewares=internal-chain@file"
+      - "traefik.http.routers.backend-internal.service=backend"
+
+       # Shared Service
+
+      - "traefik.http.services.backend.loadbalancer.server.port=4000"
     networks:
       - backend-net
 
   backend2:
+    image: ${DOCKERHUB_USERNAME}/backend:${VERSION}
     build:
       context: ./backend
 
     depends_on:
       mysql:
         condition: service_healthy
+      redis:
+        condition: service_healthy  
 
+    labels:
+      # Public Router
+
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.backend-public.rule=PathPrefix(`/api`)"
+      - "traefik.http.routers.backend-public.entrypoints=websecure"
+      - "traefik.http.routers.backend-public.tls=true"
+      - "traefik.http.routers.backend-public.middlewares=public-chain@file"
+      - "traefik.http.routers.backend-public.service=backend"
+
+      # Internal Router
+
+      - "traefik.http.routers.backend-internal.rule=PathPrefix(`/internal`)"
+      - "traefik.http.routers.backend-internal.entrypoints=websecure"
+      - "traefik.http.routers.backend-internal.tls=true"
+      - "traefik.http.routers.backend-internal.middlewares=internal-chain@file"
+      - "traefik.http.routers.backend-internal.service=backend"
+
+       # Shared Service
+
+      - "traefik.http.services.backend.loadbalancer.server.port=4000"
     networks:
       - backend-net
+
   frontend:
+    image: ${DOCKERHUB_USERNAME}/frontend:${VERSION}
     build:
       context: ./frontend
 
     networks:
       - frontend-net
+    
+    labels:
+    - "traefik.enable=true"
 
-  nginx:
-    build:
-      context: .
-      dockerfile: nginx/Dockerfile
+    - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+
+    - "traefik.http.routers.frontend.entrypoints=websecure"
+
+    - "traefik.http.routers.frontend.tls=true"
+
+    - "traefik.http.routers.frontend.middlewares=security-headers@file"
+
+    - "traefik.http.services.frontend.loadbalancer.server.port=80"
+
+  # nginx:
+  #   build:
+  #     context: .
+  #     dockerfile: nginx/Dockerfile
+
+  #   depends_on:
+  #     - frontend
+  #     - backend1
+  #     - backend2
+
+  #   networks:
+  #     - frontend-net
+  #     - backend-net
+
+
+  traefik:
+    image: traefik:v2.11
+
+    command:
+      - --configFile=/etc/traefik/traefik.yml
 
     ports:
       - "80:80"
+      - "8082:8080"
+      - "443:443"
+
+    volumes:
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic:/etc/traefik/dynamic:ro
+      - ./traefik/certs:/etc/traefik/certs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
     depends_on:
       - frontend
       - backend1
       - backend2
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s  
 
     networks:
       - frontend-net
-      - backend-net
+      - backend-net 
+      - monitoring-net
+     
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -113,23 +255,52 @@ services:
       - --housekeeping_interval=10s
 
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/metrics"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/healthz"]
       interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
+      timeout: 30s
+      retries: 5
+      start_period: 40s
 
     networks:
       - monitoring-net
 
+  node-exporter:
+    image: prom/node-exporter:latest
+
+    command:
+      - --path.rootfs=/host
+
+    volumes:
+      - /:/host:ro,rslave
+
+    ports:
+      - "9100:9100"
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9100/metrics"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+    networks:
+      - monitoring-net    
+
   prometheus:
     image: prom/prometheus:latest
 
-    ports:
-      - "9090:9090"
+    expose:
+      - "9090"
+
+    command:
+    - '--config.file=/etc/prometheus/prometheus.yml'
+    - '--storage.tsdb.path=/prometheus'
+    - '--web.external-url=https://100.86.78.124/prometheus'
+    - '--web.route-prefix=/'  
 
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
 
     depends_on:
       - cadvisor
@@ -141,15 +312,33 @@ services:
       retries: 5
       start_period: 20s
 
+    labels:
+    - "traefik.enable=true"
+
+    - "traefik.http.routers.prometheus.rule=PathPrefix(`/prometheus`)"
+    - "traefik.http.routers.prometheus.entrypoints=websecure"
+    - "traefik.http.routers.prometheus.tls=true"
+
+    - "traefik.http.routers.prometheus.middlewares=admin-chain@file,prometheus-strip@file"
+
+    - "traefik.http.services.prometheus.loadbalancer.server.port=9090"  
+
     networks:
       - monitoring-net
       - backend-net
 
+      
+
   grafana:
     image: grafana/grafana-oss:latest
 
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
+
+    environment:
+    - GF_SERVER_ROOT_URL=https://100.86.78.124/grafana
+    - GF_SERVER_SERVE_FROM_SUB_PATH=true  
+
 
     volumes:
       - grafana-data:/var/lib/grafana
@@ -166,10 +355,159 @@ services:
 
     networks:
       - monitoring-net
- 
+
+    labels:
+    - "traefik.enable=true"
+
+    - "traefik.http.routers.grafana.rule=PathPrefix(`/grafana`)"
+    - "traefik.http.routers.grafana.entrypoints=websecure"
+    - "traefik.http.routers.grafana.tls=true"
+
+    - "traefik.http.routers.grafana.middlewares=admin-chain@file"
+
+    - "traefik.http.services.grafana.loadbalancer.server.port=3000"      
+
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+
+    command:
+    - '--config.file=/etc/alertmanager/alertmanager.yml'
+    - '--web.external-url=https://100.86.78.124/alertmanager'
+    - '--web.route-prefix=/'
+
+    expose:
+      - "9093"
+  
+
+    volumes:
+      - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9093/-/healthy"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+    labels:
+    - "traefik.enable=true"
+
+    - "traefik.http.routers.alertmanager.rule=PathPrefix(`/alertmanager`)"
+    - "traefik.http.routers.alertmanager.entrypoints=websecure"
+    - "traefik.http.routers.alertmanager.tls=true"
+
+    - "traefik.http.routers.alertmanager.middlewares=admin-chain@file,alertmanager-strip@file"
+
+    - "traefik.http.services.alertmanager.loadbalancer.server.port=9093"  
+
+    networks:
+      - monitoring-net  
+
+
+  notification-service:
+    image: ${DOCKERHUB_USERNAME}/notification-service:${VERSION}
+    build:
+      context: ./notification-service
+
+    environment:
+      PORT: 5000
+
+    expose:
+      - "5000"
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    networks:
+      - monitoring-net
+
+  loki:
+    image: grafana/loki:2.9.8
+
+    command:
+      - "-config.file=/etc/loki/config.yml"
+
+    ports:
+      - "3100:3100"
+
+    volumes:
+      - ./monitoring/loki/config.yml:/etc/loki/config.yml:ro
+      - loki-data:/loki
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3100/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+    networks:
+      - monitoring-net  
+
+  promtail:
+    image: grafana/promtail:2.9.8
+
+    command:
+      - "-config.file=/etc/promtail/config.yml"
+
+    volumes:
+      - ./monitoring/promtail/config.yml:/etc/promtail/config.yml:ro
+
+      # Docker logs
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+
+      # Docker metadata
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    depends_on:
+      - loki
+
+    networks:
+      - monitoring-net        
+
+  auth-service:
+    image: ${DOCKERHUB_USERNAME}/auth-service:${VERSION}
+    build:
+      context: ./auth-service
+
+    labels:
+      - "traefik.enable=true"
+
+      # Traefik Service
+      - "traefik.http.services.auth-service.loadbalancer.server.port=3001"
+
+    networks:
+      - backend-net 
+
+
+  mysql-backup:
+    image: ${DOCKERHUB_USERNAME}/mysql-backup:${VERSION}
+    build:
+      context: ./ops/mysql-backup
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    volumes:
+      - mysql-backups:/backup
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    networks:
+      - backend-net
+
+
 volumes:
   db-data:
   grafana-data:
+  redis-data:
+  loki-data:
+  telegram-data:
+  mysql-backups:
 
 networks:
   frontend-net:

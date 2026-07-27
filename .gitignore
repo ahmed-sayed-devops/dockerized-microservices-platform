@@ -53,3 +53,12 @@ temp/
 # Runtime
 # =========================
 *.pid
+
+# =========================
+# TLS Certificates
+# =========================
+traefik/certs/
+.env
+.env.production
+.env.development
+backups/

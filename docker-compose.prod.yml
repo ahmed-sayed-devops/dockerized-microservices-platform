@@ -23,7 +23,36 @@ services:
       driver: json-file
       options:
         max-size: "10m"
+        max-file: "3"     
+
+  redis:
+    env_file:
+      - .env.production  
+    restart: unless-stopped
+    mem_limit: 64m
+    cpus: 0.10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"   
+
+
+  redis-exporter:
+    env_file:
+      - .env.production  
+    restart: unless-stopped
+    mem_limit: 64m
+    cpus: 0.10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
         max-file: "3"        
+
+
 
   backend1:
     build:
@@ -88,11 +117,35 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  nginx:
-    restart: always
+  # nginx:
+  #   restart: always
+
+  #   mem_limit: 128m
+  #   cpus: 0.10
+
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "3"
+        
+  traefik:
+    restart: unless-stopped
 
     mem_limit: 128m
-    cpus: 0.10
+    cpus: 0.20
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"      
+
+  cadvisor:
+    restart: unless-stopped
+
+    mem_limit: 512m  #128m
+    cpus: 0.50         #.1
 
     logging:
       driver: json-file
@@ -100,7 +153,7 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  cadvisor:
+  node-exporter:
     restart: unless-stopped
 
     mem_limit: 128m
@@ -110,7 +163,7 @@ services:
       driver: json-file
       options:
         max-size: "10m"
-        max-file: "3"
+        max-file: "3"        
 
   prometheus:
     restart: unless-stopped
@@ -124,15 +177,113 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  grafana:
+  alertmanager:
     restart: unless-stopped
+    env_file:
+      - .env.production  
 
-    mem_limit: 512m     # mem_limit: 256m
-    cpus: 0.50           #cpus: 0.20
+    mem_limit: 384m
+    cpus: 0.30
 
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
+      
+  notification-service:
+    build:
+      target: production
+
+    env_file:
+      - .env.production
+
+    restart: unless-stopped
+
+    environment:
+      NODE_ENV: production
+
+    mem_limit: 384m
+    cpus: 0.40
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+
+  grafana:
+    env_file:
+      - .env.production
+
+    restart: unless-stopped
+
+    environment:
+      GF_METRICS_ENABLED: ${GF_METRICS_ENABLED}   
+
+    mem_limit: 512m     # mem_limit: 256m
+    cpus: 0.60           #cpus: 0.20
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  loki:
+    restart: unless-stopped
+    mem_limit: 128m    #64
+    cpus: 0.30    #.1
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"      
+
+  promtail:
+    restart: unless-stopped
+    mem_limit: 64m
+    cpus: 0.10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"                
+
+
+  auth-service:
+    build:
+      target: production
+
+    env_file:
+      - .env.production
+
+    restart: unless-stopped
+
+    mem_limit: 128m
+    cpus: 0.10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"      
         
+
+  mysql-backup:
+    env_file:
+      - .env.production
+
+    restart: unless-stopped
+
+    mem_limit: 128m
+    cpus: 0.20
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"        

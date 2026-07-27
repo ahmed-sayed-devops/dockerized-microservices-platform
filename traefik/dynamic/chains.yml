@@ -1,0 +1,15 @@
+http:
+  middlewares:
+
+    public-chain:
+      chain:
+        middlewares:
+          - security-headers
+          - api-ratelimit
+
+    internal-chain:
+      chain:
+        middlewares:
+          - security-headers
+          - api-ratelimit
+          - api-auth
