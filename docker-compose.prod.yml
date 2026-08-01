@@ -1,6 +1,6 @@
 services:
 
-  mysql:
+  mysql-primary:
     env_file:
       - .env.production
 
@@ -14,7 +14,76 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-  mysqld-exporter:
+
+  mysql-replica:
+    restart: unless-stopped
+
+    mem_limit: 512m
+    cpus: 0.60
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"  
+
+  mysql-replication-init:
+    env_file:
+      - .env.production
+
+    restart: "no"
+
+    mem_limit: 64m
+    cpus: 0.10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"    
+
+
+  mysql-router:
+    restart: unless-stopped
+
+    mem_limit: 64m
+    cpus: 0.20
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3" 
+
+
+
+  mysql-auto-failover:
+    restart: unless-stopped
+
+    mem_limit: 64m
+    cpus: 0.10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"    
+
+  mysql-auto-rejoin:
+    restart: unless-stopped  
+
+    mem_limit: 64m
+    cpus: 0.10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"                 
+
+  mysqld-exporter-primary:
+    env_file:
+      - .env.production  
     restart: unless-stopped
     mem_limit: 64m
     cpus: 0.10
@@ -23,7 +92,24 @@ services:
       driver: json-file
       options:
         max-size: "10m"
-        max-file: "3"     
+        max-file: "3"  
+
+
+  mysqld-exporter-replica:
+    env_file:
+      - .env.production  
+    restart: unless-stopped
+    mem_limit: 64m
+    cpus: 0.10
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"  
+
+
+
 
   redis:
     env_file:

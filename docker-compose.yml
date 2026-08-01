@@ -1,14 +1,44 @@
 services:
 
-  mysql:
+  mysql-primary:
     image: mysql:8.4
 
-    ports:
-      - "3306:3306"
+    expose:
+      - "3306"
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}  
 
     volumes:
-      - db-data:/var/lib/mysql
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - mysql-primary-data:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+      - ./database/primary/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+    networks:
+      - backend-net
+
+  mysql-replica:
+    image: mysql:8.4
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+
+    expose:
+      - "3306"
+
+    volumes:
+      - mysql-replica-data:/var/lib/mysql
+      - ./database/replica/my.cnf:/etc/mysql/conf.d/my.cnf:ro
 
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123"]
@@ -20,20 +50,111 @@ services:
     networks:
       - backend-net
 
-  mysqld-exporter:
+  mysql-replication-init:
+    image: mysql:8.4
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      PRIMARY_HOST: ${PRIMARY_HOST}
+      REPLICA_HOST: ${REPLICA_HOST}
+      REPLICATION_USER: ${REPLICATION_USER}
+      REPLICATION_PASSWORD: ${REPLICATION_PASSWORD}
+      REPLICATION_TIMEOUT: ${REPLICATION_TIMEOUT}
+
+    volumes:
+      - ./database/scripts:/scripts:ro
+
+    command: >
+      bash /scripts/setup-replication.sh
+
+    networks:
+      - backend-net
+
+
+  mysql-router:
+    image: haproxy:3.0
+
+    depends_on:
+      mysql-primary:
+        condition: service_healthy
+
+      mysql-replica:
+        condition: service_healthy
+
+    command: >
+      haproxy -f /config/haproxy.cfg
+
+    restart: unless-stopped
+
+    volumes:
+      - ./database/state:/state
+      - ./database/haproxy:/config
+
+    expose:
+      - "3306"
+
+    networks:
+      - backend-net
+
+
+  
+  mysql-auto-failover:
+    build:
+      context: ./database/failover
+
+    depends_on:
+      mysql-primary:
+        condition: service_healthy
+
+      mysql-replica:
+        condition: service_healthy
+
+      mysql-router:
+        condition: service_started  
+
+    command: >
+      bash /scripts/auto-failover.sh
+
+    volumes:
+      - ./database/failover:/scripts:ro
+      - ./database/state:/state
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./database/haproxy:/config
+
+    networks:
+      - backend-net    
+
+  mysql-auto-rejoin:
+    build:
+      context: ./database/failover
+
+    command: >
+      bash /scripts/auto-rejoin.sh
+
+    volumes:
+      - ./database/failover:/scripts:ro
+      - ./database/state:/state
+      - ./database/haproxy:/config
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    networks:
+      - backend-net
+
+    
+ 
+
+  mysqld-exporter-primary:
     image: prom/mysqld-exporter:v0.16.0
 
     command:
-    - --config.my-cnf=/cfg/.my.cnf
+      - --config.my-cnf=/cfg/.my.cnf
 
     volumes:
-    - ./monitoring/mysql/.my.cnf:/cfg/.my.cnf:ro
+      - ./monitoring/mysql/primary/.my.cnf:/cfg/.my.cnf:ro
 
     depends_on:
-     mysql:
-       condition: service_healthy
-     redis:
-       condition: service_healthy  
+      mysql-primary:
+        condition: service_healthy
 
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:9104/metrics"]
@@ -43,11 +164,40 @@ services:
       start_period: 20s
 
     expose:
-    - "9104"
+      - "9104"
 
     networks:
-    - backend-net
-    - monitoring-net
+      - backend-net
+      - monitoring-net   
+
+  mysqld-exporter-replica:
+    image: prom/mysqld-exporter:v0.16.0
+
+    command:
+      - --config.my-cnf=/cfg/.my.cnf
+
+    volumes:
+      - ./monitoring/mysql/replica/.my.cnf:/cfg/.my.cnf:ro
+
+    depends_on:
+      mysql-replica:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9104/metrics"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+    expose:
+      - "9104"
+
+    networks:
+      - backend-net
+      - monitoring-net    
+
+
 
   redis:
     image: redis:7-alpine
@@ -71,7 +221,8 @@ services:
       start_period: 10s
 
     networks:
-      - backend-net
+      - backend-net 
+
 
   redis-exporter:
     image: oliver006/redis_exporter:latest
@@ -88,7 +239,9 @@ services:
 
     networks:
       - backend-net
-      - monitoring-net    
+      - monitoring-net 
+
+
           
   backend1:
     image: ${DOCKERHUB_USERNAME}/backend:${VERSION}
@@ -96,7 +249,7 @@ services:
       context: ./backend
 
     depends_on:
-      mysql:
+      mysql-primary:
         condition: service_healthy
       redis:
         condition: service_healthy  
@@ -132,7 +285,7 @@ services:
       context: ./backend
 
     depends_on:
-      mysql:
+      mysql-primary:
         condition: service_healthy
       redis:
         condition: service_healthy  
@@ -490,7 +643,7 @@ services:
       context: ./ops/mysql-backup
 
     depends_on:
-      mysql:
+      mysql-primary:
         condition: service_healthy
 
     volumes:
@@ -502,7 +655,8 @@ services:
 
 
 volumes:
-  db-data:
+  mysql-primary-data:
+  mysql-replica-data:
   grafana-data:
   redis-data:
   loki-data:
