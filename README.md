@@ -353,6 +353,8 @@ Traefik acts as the entry point for the entire platform and is responsible for r
 
 ## Traefik Dashboard
 
+https://traefik.local/dashboard/
+
 The dashboard provides complete visibility into routers, services and middlewares.
 
 <p align="center">
