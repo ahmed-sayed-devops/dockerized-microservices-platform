@@ -311,7 +311,7 @@ Persistent Docker volumes are used to preserve important data.
 - Database Backups
 
 <p align="center">
-  <img src="screenshots/57-Networks-Volumes.png" width="100%">
+  <img src="ScreenShots/57-Networks-Volumes.png" width="100%">
 </p>
 
 
@@ -328,7 +328,7 @@ The project builds custom images for all internal services.
 - MySQL Backup
 
 <p align="center">
-  <img src="screenshots/56-Images.png" width="100%">
+  <img src="ScreenShots/56-Images.png" width="100%">
 </p>
 
 ---
@@ -356,7 +356,7 @@ Traefik acts as the entry point for the entire platform and is responsible for r
 The dashboard provides complete visibility into routers, services and middlewares.
 
 <p align="center">
-  <img src="screenshots/24-Traefik Dashboard.png" width="100%">
+  <img src="ScreenShots/24-Traefik Dashboard.png" width="100%">
 </p>
 
 
@@ -382,7 +382,7 @@ Traefik routes incoming requests based on URL paths.
 Internal APIs are protected using Forward Authentication.
 
 <p align="center">
-  <img src="screenshots/25-Traefik Routers.png" width="100%">
+  <img src="ScreenShots/25-Traefik Routers.png" width="100%">
 </p>
 
 ---
@@ -398,7 +398,7 @@ Features:
 - Automatic Health Detection
 
 <p align="center">
-  <img src="screenshots/26-Traefik Services.png" width="100%">
+  <img src="ScreenShots/26-Traefik Services.png" width="100%">
 </p>
 
 ---
@@ -419,7 +419,7 @@ Multiple middleware chains are used to secure the platform.
 - API Authentication
 
 <p align="center">
-  <img src="screenshots/27-Traefik Middlewares.png" width="100%">
+  <img src="ScreenShots/27-Traefik Middlewares.png" width="100%">
 </p>
 
 ---
@@ -444,7 +444,7 @@ Features
 - Encrypted Traffic
 
 <p align="center">
-  <img src="screenshots/30-TLS certificate.png" width="100%">
+  <img src="ScreenShots/30-TLS certificate.png" width="100%">
 </p>
 
 ---
@@ -478,13 +478,13 @@ Examples include:
 Internal Middleware
 
 <p align="center">
-  <img src="screenshots/32-Internal API Security Middleware.png" width="100%">
+  <img src="ScreenShots/32-Internal API Security Middleware.png" width="100%">
 </p>
 
 Public Middleware
 
 <p align="center">
-  <img src="screenshots/33-Public API Security Middleware.png" width="100%">
+  <img src="ScreenShots/33-Public API Security Middleware.png" width="100%">
 </p>
 
 ---
@@ -498,7 +498,7 @@ Without the key, requests are rejected.
 Verification
 
 <p align="center">
-  <img src="screenshots/34-Check API Key.png" width="100%">
+  <img src="ScreenShots/34-Check API Key.png" width="100%">
 </p>
 
 ---
@@ -510,17 +510,17 @@ Sensitive endpoints can only be accessed from approved IP addresses.
 Authorized Client
 
 <p align="center">
-  <img src="screenshots/35-IP WhiteList -My IP.png" width="100%">
+  <img src="ScreenShots/35-IP WhiteList -My IP.png" width="100%">
 </p>
 
 Blocked Client
 
 <p align="center">
-  <img src="screenshots/36-IP WhiteList - Change My IP.png" width="100%">
+  <img src="ScreenShots/36-IP WhiteList - Change My IP.png" width="100%">
 </p>
 
 <p align="center">
-  <img src="screenshots/37-grafan-prometheus-alertmanger forbiddend after change my ip.png" width="100%">
+  <img src="ScreenShots/37-grafan-prometheus-alertmanger forbiddend after change my ip.png" width="100%">
 </p>
 
 ---
@@ -538,14 +538,14 @@ Configuration
 Middleware
 
 <p align="center">
-  <img src="screenshots/38-API Rate Limiting Middleware.png" width="100%">
+  <img src="ScreenShots/38-API Rate Limiting Middleware.png" width="100%">
 </p>
 
 
 Validation
 
 <p align="center">
-  <img src="screenshots/39-Check API Rate Limit.png" width="100%">
+  <img src="ScreenShots/39-Check API Rate Limit.png" width="100%">
 </p>
 
 
@@ -579,7 +579,7 @@ Benefits
 ## Backend Replica 1
 
 <p align="center">
-  <img src="screenshots/54-LB-backend1 after num of requests.png" width="100%">
+  <img src="ScreenShots/54-LB-backend1 after num of requests.png" width="100%">
 </p>
 
 ---
@@ -587,7 +587,7 @@ Benefits
 ## Backend Replica 2
 
 <p align="center">
-  <img src="screenshots/55-LB-backend2 after num of requests.png" width="100%">
+  <img src="ScreenShots/55-LB-backend2 after num of requests.png" width="100%">
 </p>
 
 ---
@@ -618,7 +618,7 @@ Initially, one MySQL instance acts as the writable Primary while the second inst
 The active primary is tracked automatically using the shared state file.
 
 <p align="center">
-  <img src="screenshots/58-current primary-current replica.png" width="100%">
+  <img src="ScreenShots/58-current primary-current replica.png" width="100%">
 </p>
 
 ---
@@ -630,7 +630,7 @@ GTID Replication continuously synchronizes data from the Primary to the Replica.
 The replication health is verified using MySQL replication status.
 
 <p align="center">
-  <img src="screenshots/59-replication is working.png" width="100%">
+  <img src="ScreenShots/59-replication is working.png" width="100%">
 </p>
 
 ---
@@ -649,7 +649,7 @@ If the Primary database becomes unavailable:
 No manual intervention is required.
 
 <p align="center">
-  <img src="screenshots/60-stop mysql primary - then replica become primary.png" width="100%">
+  <img src="ScreenShots/60-stop mysql primary - then replica become primary.png" width="100%">
 </p>
 
 ---
@@ -661,7 +661,7 @@ After every promotion or failback, HAProxy regenerates its backend configuration
 Instead of using a static backend, HAProxy always routes write traffic to the current writable Primary.
 
 <p align="center">
-  <img src="screenshots/61-test haproxy backend - who is primary.png" width="100%">
+  <img src="ScreenShots/61-test haproxy backend - who is primary.png" width="100%">
 </p>
 
 ---
@@ -676,7 +676,7 @@ When the failed server comes back online:
 - The server becomes the Replica without any manual SQL commands.
 
 <p align="center">
-  <img src="screenshots/62-start mysql primary - then it becomes replica.png" width="100%">
+  <img src="ScreenShots/62-start mysql primary - then it becomes replica.png" width="100%">
 </p>
 
 ---
@@ -688,7 +688,7 @@ After the automatic failover process completes, the application continues servin
 No application configuration changes are required.
 
 <p align="center">
-  <img src="screenshots/63-after auto failover app is working.png" width="100%">
+  <img src="ScreenShots/63-after auto failover app is working.png" width="100%">
 </p>
 
 ---
@@ -700,7 +700,7 @@ If the active Primary fails later, the remaining healthy server is promoted auto
 HAProxy updates its routing dynamically and client traffic continues without manual switching.
 
 <p align="center">
-  <img src="screenshots/64-stop replica - then mysql primary back primary.png" width="100%">
+  <img src="ScreenShots/64-stop replica - then mysql primary back primary.png" width="100%">
 </p>
 
 ---
@@ -744,7 +744,7 @@ Prometheus continuously scrapes metrics from all monitored services.
 Healthy Targets
 
 <p align="center">
-  <img src="screenshots/08-Prom-Targets.png" width="100%">
+  <img src="ScreenShots/08-Prom-Targets.png" width="100%">
 </p>
 
 ---
@@ -756,7 +756,7 @@ Prometheus instantly detects unavailable services.
 Example
 
 <p align="center">
-  <img src="screenshots/10-Prom-Target-Down.png" width="100%">
+  <img src="ScreenShots/10-Prom-Target-Down.png" width="100%">
 </p>
 
 ---
@@ -776,7 +776,7 @@ Examples
 **Screenshot**
 
 <p align="center">
-  <img src="screenshots/43-Prometheus Alerts.png" width="100%">
+  <img src="ScreenShots/43-Prometheus Alerts.png" width="100%">
 </p>
 
 ---
@@ -796,13 +796,13 @@ Dashboards include
 Application Dashboard
 
 <p align="center">
-  <img src="screenshots/12-application-dashboard.png" width="100%">
+  <img src="ScreenShots/12-application-dashboard.png" width="100%">
 </p>
 
 Infrastructure Dashboard
 
 <p align="center">
-  <img src="screenshots/53-grafana-docker platform overview dashboard.png" width="100%">
+  <img src="ScreenShots/53-grafana-docker platform overview dashboard.png" width="100%">
 </p>
 
 ---
@@ -819,7 +819,7 @@ Container metrics include
 Dashboard
 
 <p align="center">
-  <img src="screenshots/13-cadvisor-dashboard.png" width="100%">
+  <img src="ScreenShots/13-cadvisor-dashboard.png" width="100%">
 </p>
 
 ```
@@ -842,7 +842,7 @@ Database metrics include
 - Performance
 
 <p align="center">
-  <img src="screenshots/16-mysql-dashboard-1.png" width="100%">
+  <img src="ScreenShots/16-mysql-dashboard-1.png" width="100%">
 </p>
 
 ```
@@ -882,7 +882,7 @@ Benefits
 Logs from every container can be queried directly inside Grafana.
 
 <p align="center">
-  <img src="screenshots/47-grafana-loki.png" width="100%">
+  <img src="ScreenShots/47-grafana-loki.png" width="100%">
 </p>
 
 ---
@@ -898,7 +898,7 @@ Example
 ```
 
 <p align="center">
-  <img src="screenshots/48-grafana-loki-logs.png" width="100%">
+  <img src="ScreenShots/48-grafana-loki-logs.png" width="100%">
 </p>
 
 ---
@@ -909,7 +909,7 @@ Real-time backend logs collected by Loki.
 
 
 <p align="center">
-  <img src="screenshots/49-Grafana Container Logs 1.png" width="100%">
+  <img src="ScreenShots/49-Grafana Container Logs 1.png" width="100%">
 </p>
 
 ```
@@ -921,11 +921,11 @@ screenshots/51-Grafana Container Logs 3.png
 ```
 
 <p align="center">
-  <img src="screenshots/51-Grafana Container Logs 3.png" width="100%">
+  <img src="ScreenShots/51-Grafana Container Logs 3.png" width="100%">
 </p>
 
 <p align="center">
-  <img src="screenshots/52-Grafana Container Logs 4.png" width="100%">
+  <img src="ScreenShots/52-Grafana Container Logs 4.png" width="100%">
 </p>
 
 ---
@@ -957,7 +957,7 @@ Slack & Telegram
 Alertmanager receives alerts from Prometheus before forwarding notifications.
 
 <p align="center">
-  <img src="screenshots/44-AlertManager Alerts.png" width="100%">
+  <img src="ScreenShots/44-AlertManager Alerts.png" width="100%">
 </p>
 
 
@@ -975,7 +975,7 @@ Example
 - High Memory
 
 <p align="center">
-  <img src="screenshots/45-Slack Notifications.png" width="100%">
+  <img src="ScreenShots/45-Slack Notifications.png" width="100%">
 </p>
 
 ---
@@ -985,7 +985,7 @@ Example
 Telegram provides instant mobile notifications.
 
 <p align="center">
-  <img src="screenshots/46-Telegram Notification.png" width="100%">
+  <img src="ScreenShots/46-Telegram Notification.png" width="100%">
 </p>
 
 ---
@@ -1009,7 +1009,7 @@ Features
 Automatically generated database backups.
 
 <p align="center">
-  <img src="screenshots/40-mysql backups.png" width="100%">
+  <img src="ScreenShots/40-mysql backups.png" width="100%">
 </p>
 
 ---
@@ -1020,7 +1020,7 @@ To verify the restore process, a table was intentionally deleted.
 
 
 <p align="center">
-  <img src="screenshots/41-delete mysql table after backup.png" width="100%">
+  <img src="ScreenShots/41-delete mysql table after backup.png" width="100%">
 </p>
 
 ---
@@ -1030,7 +1030,7 @@ To verify the restore process, a table was intentionally deleted.
 The latest backup was restored successfully.
 
 <p align="center">
-  <img src="screenshots/42-restore my sql table after restore backup.png" width="100%">
+  <img src="ScreenShots/42-restore my sql table after restore backup.png" width="100%">
 </p>
 
 ---
@@ -1080,12 +1080,12 @@ Examples
 Validation
 
 <p align="center">
-  <img src="screenshots/04-Test-RestartPolicy-By-docker-kill.png" width="100%">
+  <img src="ScreenShots/04-Test-RestartPolicy-By-docker-kill.png" width="100%">
 </p>
 
 
 <p align="center">
-  <img src="screenshots/05-Test-RestartPolicy-Unless-stopped.png" width="100%">
+  <img src="ScreenShots/05-Test-RestartPolicy-Unless-stopped.png" width="100%">
 </p>
 
 ---
@@ -1136,11 +1136,11 @@ The following production scenarios were successfully validated.
 ## Running Containers
 
 <p align="center">
-  <img src="screenshots/23-running conts-1.png" width="100%">
+  <img src="ScreenShots/23-running conts-1.png" width="100%">
 </p>
 
 <p align="center">
-  <img src="screenshots/24-running conts-2.png" width="100%">
+  <img src="ScreenShots/24-running conts-2.png" width="100%">
 </p>
 
 ---
@@ -1150,7 +1150,7 @@ The following production scenarios were successfully validated.
 The platform is composed of multiple custom-built images and production services.
 
 <p align="center">
-  <img src="screenshots/56-Images.png" width="100%">
+  <img src="ScreenShots/56-Images.png" width="100%">
 </p>
 
 ---
@@ -1160,7 +1160,7 @@ The platform is composed of multiple custom-built images and production services
 Dedicated bridge networks and persistent volumes provide service isolation and durable storage.
 
 <p align="center">
-  <img src="screenshots/57-Networks-Volumes.png" width="100%">
+  <img src="ScreenShots/57-Networks-Volumes.png" width="100%">
 </p>
 
 ---
