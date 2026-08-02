@@ -54,12 +54,29 @@ scrape_configs:
           - backend2:4000
 
   # --------------------------
-  # MySQL Exporter
+  # MySQL Primary Exporter
   # --------------------------
-  - job_name: "mysql"
+  - job_name: "mysql-primary"
     static_configs:
       - targets:
-          - mysqld-exporter:9104
+          - mysqld-exporter-primary:9104
+
+  # --------------------------
+  # MySQL Replica Exporter
+  # --------------------------
+  - job_name: "mysql-replica"
+    static_configs:
+      - targets:
+          - mysqld-exporter-replica:9104
+
+  # --------------------------
+  # HAProxy
+  # --------------------------
+  - job_name: "haproxy"
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - mysql-router:8404
 
   # --------------------------
   # Node Exporter
@@ -85,15 +102,6 @@ scrape_configs:
     static_configs:
       - targets:
           - traefik:8080
-
-  # --------------------------
-  # Grafana
-  # --------------------------
-  - job_name: "grafana"
-    metrics_path: /metrics
-    static_configs:
-      - targets:
-          - grafana:3000
 
   # --------------------------
   # Alertmanager

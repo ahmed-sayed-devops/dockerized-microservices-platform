@@ -195,8 +195,7 @@ services:
 
     networks:
       - backend-net
-      - monitoring-net    
-
+      - monitoring-net
 
 
   redis:

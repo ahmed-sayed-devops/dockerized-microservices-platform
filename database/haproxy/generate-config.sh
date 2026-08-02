@@ -37,6 +37,16 @@ frontend mysql
     bind *:3306
     default_backend mysql_primary
 
+listen stats
+    bind *:8404
+    mode http
+
+    stats enable
+    stats uri /stats
+    stats refresh 10s
+
+    http-request use-service prometheus-exporter if { path /metrics }
+
 backend mysql_primary
     option tcp-check
 

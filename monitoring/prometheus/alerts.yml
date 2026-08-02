@@ -17,17 +17,30 @@ groups:
           description: "{{ $labels.instance }} is down."
 
       # =====================================================
-      # MySQL Exporter
+      # MySQL Primary Exporter
       # =====================================================
 
-      - alert: MySQLExporterDown
-        expr: up{job="mysql"} == 0
+      - alert: MySQLPrimaryExporterDown
+        expr: up{job="mysql-primary"} == 0
         for: 1m
         labels:
           severity: critical
         annotations:
-          summary: MySQL Exporter Down
-          description: "{{ $labels.instance }} is unreachable."
+          summary: MySQL Primary Exporter Down
+          description: Primary MySQL exporter ({{ $labels.instance }}) is unreachable.
+
+      # =====================================================
+      # MySQL Replica Exporter
+      # =====================================================
+
+      - alert: MySQLReplicaExporterDown
+        expr: up{job="mysql-replica"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: MySQL Replica Exporter Down
+          description: Replica MySQL exporter ({{ $labels.instance }}) is unreachable.
 
       # =====================================================
       # Redis Exporter
@@ -56,6 +69,19 @@ groups:
           description: Reverse Proxy is unavailable.
 
       # =====================================================
+      # HAProxy
+      # =====================================================
+
+      - alert: HAProxyDown
+        expr: up{job="haproxy"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: HAProxy Down
+          description: MySQL Router is unavailable.
+
+      # =====================================================
       # Prometheus
       # =====================================================
 
@@ -80,19 +106,6 @@ groups:
         annotations:
           summary: Alertmanager Down
           description: Alertmanager is unavailable.
-
-      # =====================================================
-      # Grafana
-      # =====================================================
-
-      - alert: GrafanaDown
-        expr: up{job="grafana"} == 0
-        for: 2m
-        labels:
-          severity: warning
-        annotations:
-          summary: Grafana Down
-          description: Grafana dashboard is unavailable.
 
       # =====================================================
       # Loki
