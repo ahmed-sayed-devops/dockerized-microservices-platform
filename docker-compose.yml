@@ -195,7 +195,27 @@ services:
 
     networks:
       - backend-net
-      - monitoring-net
+      - monitoring-net 
+
+  haproxy-exporter:
+    image: prom/haproxy-exporter:v0.17.0
+
+    command:
+      - "--haproxy.scrape-uri=http://mysql-router:8404/stats;csv"
+
+    expose:
+      - "9101"
+
+    depends_on:
+      mysql-router:
+        condition: service_started
+
+    restart: unless-stopped
+
+    networks:
+      - backend-net
+      - monitoring-net       
+
 
 
   redis:
@@ -358,7 +378,6 @@ services:
 
     ports:
       - "80:80"
-      - "8082:8080"
       - "443:443"
 
     volumes:
@@ -382,6 +401,7 @@ services:
       - frontend-net
       - backend-net 
       - monitoring-net
+
      
 
   cadvisor:

@@ -4,7 +4,7 @@ http:
 
     dashboard:
 
-      rule: PathPrefix(`/traefik`)
+      rule: Host(`traefik.local`)
 
       entryPoints:
         - websecure
@@ -15,13 +15,25 @@ http:
 
       middlewares:
         - admin-chain
-        - traefik-strip
+
+    dashboard-http:
+
+      rule: Host(`traefik.local`)
+
+      entryPoints:
+        - web
+
+      service: api@internal
+
+      middlewares:
+        - https-redirect
 
   middlewares:
 
-    traefik-strip:
+    https-redirect:
 
-      stripPrefix:
+      redirectScheme:
 
-        prefixes:
-          - "/traefik"
+        scheme: https
+
+        permanent: true
