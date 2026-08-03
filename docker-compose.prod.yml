@@ -12,8 +12,8 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: "20m"
+        max-file: "5"
 
   mysql-replica:
     restart: unless-stopped
@@ -24,8 +24,8 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"  
+        max-size: "20m"
+        max-file: "5"  
 
   mysql-replication-init:
     env_file:
@@ -58,7 +58,7 @@ services:
 
 
   mysql-auto-failover:
-    restart: unless-stopped
+    restart: always
 
     mem_limit: 64m
     cpus: 0.10
@@ -70,7 +70,7 @@ services:
         max-file: "3"    
 
   mysql-auto-rejoin:
-    restart: unless-stopped  
+    restart: always  
 
     mem_limit: 64m
     cpus: 0.10
@@ -157,8 +157,8 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: "20m"
+        max-file: "5"
 
   backend2:
     build:
@@ -179,8 +179,8 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: "20m"
+        max-file: "5"
 
 
   frontend:
@@ -222,8 +222,8 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"      
+        max-size: "20m"
+        max-file: "5"      
 
   cadvisor:
     restart: unless-stopped
@@ -258,8 +258,8 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: "20m"
+        max-file: "5"
 
   alertmanager:
     restart: unless-stopped
@@ -282,7 +282,7 @@ services:
     env_file:
       - .env.production
 
-    restart: unless-stopped
+    restart: always
 
     environment:
       NODE_ENV: production
@@ -312,8 +312,8 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: "20m"
+        max-file: "5"
 
   loki:
     restart: unless-stopped
@@ -361,7 +361,7 @@ services:
     env_file:
       - .env.production
 
-    restart: unless-stopped
+    restart: always
 
     mem_limit: 128m
     cpus: 0.20
