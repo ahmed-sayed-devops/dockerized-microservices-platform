@@ -462,6 +462,9 @@ This guarantees encrypted communication.
 ```
 screenshots/31-HTTP to HTTPS Automatic Redirection.png
 ```
+<p align="center">
+  <img src="ScreenShots/31-HTTP to HTTPS Automatic Redirection.png" width="100%">
+</p>
 
 ---
 
