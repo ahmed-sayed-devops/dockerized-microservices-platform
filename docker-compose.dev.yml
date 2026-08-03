@@ -1,22 +1,89 @@
 services:
-
-  mysql:
+  mysql-primary:
     env_file:
       - .env.development
 
-  backend:
+
+  mysql-replica:
+    env_file:
+      - .env.development
+
+
+  mysql-replication-init:
+    env_file:
+      - .env.development
+
+
+  mysql-router:
+    env_file:
+      - .env.development
+
+
+  mysql-auto-failover:
+    env_file:
+      - .env.development
+
+
+  mysql-auto-rejoin:
+    env_file:
+      - .env.development
+
+
+  mysqld-exporter-primary:
+    env_file:
+      - .env.development
+
+
+  mysqld-exporter-replica:
+    env_file:
+      - .env.development
+
+
+
+  redis:
+    env_file:
+      - .env.development
+
+
+
+  redis-exporter:
+    env_file:
+      - .env.development
+
+
+  backend1:
     build:
       target: development
 
     env_file:
       - .env.development
 
+    environment:
+      NODE_ENV: development
+      INSTANCE_NAME: backend1
+
     volumes:
       - ./backend:/app
       - /app/node_modules
 
+    command: npm run dev
+
+
+
+  backend2:
+    build:
+      target: development
+
+    env_file:
+      - .env.development
+
     environment:
       NODE_ENV: development
+      INSTANCE_NAME: backend2
+
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
 
     command: npm run dev
 
@@ -38,3 +105,83 @@ services:
       CHOKIDAR_USEPOLLING: "true"
 
     command: npm run dev -- --host
+
+
+  traefik:
+    env_file:
+      - .env.development
+
+
+  cadvisor:
+    env_file:
+      - .env.development
+
+  node-exporter:
+    env_file:
+      - .env.development
+
+
+  prometheus:
+    env_file:
+      - .env.development
+
+
+  alertmanager:
+    env_file:
+      - .env.development
+
+
+  notification-service:
+    build:
+      target: development
+
+    env_file:
+      - .env.development
+
+    environment:
+      NODE_ENV: development
+
+    volumes:
+      - ./notification-service:/app
+      - /app/node_modules
+
+    command: npm run dev
+
+
+
+  grafana:
+    env_file:
+      - .env.development
+
+    environment:
+      GF_METRICS_ENABLED: ${GF_METRICS_ENABLED}
+
+  loki:
+    env_file:
+      - .env.development
+
+  promtail:
+    env_file:
+      - .env.development
+
+
+  auth-service:
+    build:
+      target: development
+
+    env_file:
+      - .env.development
+
+    volumes:
+      - ./auth-service:/app
+      - /app/node_modules
+
+    environment:
+      NODE_ENV: development
+
+    command: npm run dev
+
+
+  mysql-backup:
+    env_file:
+      - .env.development
